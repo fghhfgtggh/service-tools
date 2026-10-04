@@ -1,9 +1,6 @@
 name: Build & Push Image
 
 on:
-  push:
-    branches: [main]
-    tags: ['v*']
   workflow_dispatch:
 
 permissions:
@@ -29,8 +26,7 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository }}
           tags: |
-            type=raw,value=latest,enable={{is_default_branch}}
-            type=ref,event=tag
+            type=raw,value=latest
             type=sha,prefix=
 
       - uses: docker/build-push-action@v6
@@ -43,7 +39,6 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      # 可选：推送后让 HF Space 重新拉取镜像
       - name: Restart HF Space
         if: ${{ vars.HF_SPACE != '' }}
         env:
